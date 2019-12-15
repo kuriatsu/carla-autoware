@@ -31,9 +31,9 @@
 	<arg name="maxLocalPlanDistance" 	default="30" />	
 	<arg name="horizonDistance" 		default="100"  />
 	
-	<arg name="minFollowingDistance" 	default="12.0"  /> <!-- should be bigger than Distance to follow -->	
-	<arg name="minDistanceToAvoid" 		default="8.0" /> <!-- should be smaller than minFollowingDistance and larger than maxDistanceToAvoid -->
-	<arg name="maxDistanceToAvoid" 		default="3.0"  /> <!-- should be smaller than minDistanceToAvoid -->
+	<arg name="minFollowingDistance" 	default="25.0"  /> <!-- should be bigger than Distance to follow -->	
+	<arg name="minDistanceToAvoid" 		default="15.0" /> <!-- should be smaller than minFollowingDistance and larger than maxDistanceToAvoid -->
+	<arg name="maxDistanceToAvoid" 		default="15.0"  /> <!-- should be smaller than minDistanceToAvoid -->
 	<arg name="speedProfileFactor"		default="1.3"  />
 	
 	<arg name="smoothingDataWeight"		default="0.45"  />
@@ -54,9 +54,9 @@
 	<arg name="turningRadius"		default="5.2"  />
 	<arg name="maxSteerAngle" 		default="0.4" />
 
-	<arg name="steeringDelay" 		default="0.0" />
+	<arg name="steeringDelay" 		default="1.0" />
 	<arg name="minPursuiteDistance" 	default="3.0" />
-	<arg name="additionalBrakingDistance"   default="10.0" />
+	<arg name="additionalBrakingDistance"   default="20.0" />
 	
 	<arg name="giveUpDistance" 		default="-4.0"  />
 	

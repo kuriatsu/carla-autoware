@@ -6,11 +6,14 @@
   <arg name='town' default=''/>
   <arg name='role_name' default='ego_vehicle'/>
   <!-- use comma separated format "x,y,z,roll,pitch,yaw" -->
-  <arg name='spawn_point' default='43.3791656494, -144.790603638, 1.0, 3.0804, 0, 0'/>
-  <!--arg name='spawn_point' default=''/-->
+  <!--arg name='spawn_point' default='43.3791656494, -144.790603638, 1.0, 3.0804, 0, 0'/-->
+  <!--arg name='spawn_point' default='43.3791656494, -144.790603638, 1.0, 3.0804, 0, 0'/-->
+  <arg name='spawn_point' default=''/>
   <!-- use comma separated format "x,y,z,quat_x,quat_y,quat_z, quat_w" -->
-  <arg name="goal_point" default='41.4185562134, -211.274246216, 0.0, 0.0, 0.0, -0.0106333546412, 0.999943464286'/>
+
   <!--arg name="goal_point" default='' /-->
+  <!--arg name="goal_point" default='41.4185562134, -211.274246216, 0.0, 0.0, 0.0, -0.0106333546412, 0.999943464286'/-->
+  <arg name="goal_point" default='-8.46798324585, -234.020553589, 0.0, 0.0, 0.0, -0.705942879048, 0.708268770681'/>
 
 <!--
   <include file="$(find carla_autoware_bridge)/launch/carla_autoware_bridge_with_manual_control.launch">

@@ -1,0 +1,14 @@
+<!-- -->
+<launch>
+
+  <include file="$(env CARLA_OPENPLANNER_ROOT)/my_map.launch"/>
+  <include file="$(env CARLA_OPENPLANNER_ROOT)/my_sensing.launch"/>
+  <include file="$(env CARLA_OPENPLANNER_ROOT)/my_localization.launch"/>
+  <!--include file="$(env CARLA_OPENPLANNER_ROOT)/my_detection.launch"/-->
+  <include file="$(env CARLA_OPENPLANNER_ROOT)/my_common_params.launch"/>
+  <!--include file="$(env CARLA_OPENPLANNER_ROOT)/my_tracking.launch"/-->
+  <include file="$(env CARLA_OPENPLANNER_ROOT)/my_open_planner.launch"/>
+  <include file="$(env CARLA_OPENPLANNER_ROOT)/my_path_follower.launch"/>
+
+</launch>
+

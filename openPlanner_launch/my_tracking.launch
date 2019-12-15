@@ -1,0 +1,30 @@
+<!-- -->
+<launch>
+
+  <!-- 
+    # lidar_kf_contour_track #
+    @todo: still required?
+  -->
+<include file="$(find lidar_kf_contour_track)/launch/lidar_kf_contour_track.launch">
+	<arg name="vehicle_width" default="1.85" />
+	<arg name="vehicle_length" default="4.2" />	
+	<arg name="min_object_size" default="0.1" />
+	<arg name="max_object_size" default="20.0" />
+	<arg name="polygon_quarters" default="8" />
+	<arg name="polygon_resolution" default="0.2" />
+	<arg name="tracking_type" default="1" /> <!-- 0 for association only, 1 for simple kf tracking, 2 for smart contour tracker -->
+	<arg name="max_association_distance" default="3.0" />
+	<arg name="max_association_size_diff" default="2.0" />
+	
+	<arg name="max_remeber_time" default="1.5" />
+	<arg name="trust_counter" default="2" />
+		
+	<arg name="enableSimulationMode" default="false" />
+	<arg name="enableStepByStepMode" default="false" />
+	
+	<arg name="vector_map_filter_distance" default="0" /> <!-- set 0 to disable vector map filtering  -->
+	<arg name="enableLogging" default="false" />
+
+  </include> 
+
+</launch>

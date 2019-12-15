@@ -1,0 +1,30 @@
+<!-- -->
+<launch>
+
+  <!-- 
+    # lidar_euclidean_cluster_detect #
+    @todo: still required?
+  -->
+  <include file="$(find lidar_euclidean_cluster_detect)/launch/lidar_euclidean_cluster_detect.launch">
+ <arg name="points_node" default="/points_no_ground" />
+  <arg name="remove_ground" default="false" />
+  <arg name="downsample_cloud" default="false" /> 
+  <arg name="leaf_size" default="0.1" />
+  <arg name="cluster_size_min" default="10" />
+  <arg name="cluster_size_max" default="100000" />
+  <arg name="sync" default="false" />
+  <arg name="use_diffnormals" default="false" />
+  <arg name="pose_estimation" default="true" />
+  <arg name="clip_min_height" default="-2.3" />
+  <arg name="clip_max_height" default="0.0" />
+  <arg name="output_frame" default="map" />
+  <arg name="use_gpu" default="true" />
+
+  </include> 
+
+  <!-- 
+    # lidar detection #
+    @todo: add
+  -->
+
+</launch>

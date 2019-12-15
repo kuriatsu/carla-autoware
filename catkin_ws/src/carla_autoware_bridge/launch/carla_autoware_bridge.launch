@@ -8,6 +8,8 @@
   <arg name='role_name' default='ego_vehicle'/>
   <!-- use comma separated format "x,y,z,roll,pitch,yaw" -->
   <arg name='spawn_point' default=''/>
+  <!-- use comma separated format "x,y,z,quat_x,quat_y,quat_z, quat_w" -->
+  <arg name="goal_point" default='' />
 
   <!--
     #################
@@ -36,6 +38,7 @@
     <arg name='host' value='$(arg host)'/>
     <arg name='port' value='$(arg port)'/>
     <arg name="role_name" value='$(arg role_name)'/>
+    <arg name="goal_point" value="$(arg goal_point)" />
   </include>
 
   <!--

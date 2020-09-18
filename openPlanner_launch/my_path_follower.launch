@@ -24,7 +24,10 @@
     In:  /decision_maker/state (@todo: not connected yet)
     Out: /vehicle_cmd (the combined vehicle command for actuator)
   -->
- <include file="$(find waypoint_follower)/launch/twist_filter.launch"/>
+  <node pkg="rostopic" type="rostopic" name="config_twist_filter_rostopic"
+        args="pub -l /config/twist_filter autoware_config_msgs/ConfigTwistFilter
+        '{ header: auto, lateral_accel_limit: 2.0, lowpass_gain_linear_x: 0.0, lowpass_gain_angular_z: 0.0 }' " />
+  <include file="$(find waypoint_follower)/launch/twist_filter.launch"/>
 
 
 </launch>

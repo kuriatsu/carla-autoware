@@ -6,12 +6,12 @@
   -->
   <node name="$(anon dynparam)" pkg="dynamic_reconfigure" type="dynparam" args="set_from_parameters carla/ego_vehicle/ackermann_control">
     <param name="speed_Kp" type="double" value="0.15" />
-    <param name="speed_Ki" type="double" value="0.0" />
+    <param name="speed_Ki" type="double" value="0.1" />
     <param name="speed_Kd" type="double" value="0.4" />
 
-    <param name="accel_Kp" type="double" value="0.03" />
-    <param name="accel_Ki" type="double" value="0.0" />
-    <param name="accel_Kd" type="double" value="0.05" />
+    <param name="accel_Kp" type="double" value="0.1" />
+    <param name="accel_Ki" type="double" value="0.2" />
+    <param name="accel_Kd" type="double" value="0.1" />
   </node>
 
   <!-- 

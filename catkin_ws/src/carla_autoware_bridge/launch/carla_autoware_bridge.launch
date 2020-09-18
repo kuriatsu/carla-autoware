@@ -34,13 +34,15 @@
   </include>
 
   <!-- mission planning -->
+  <!--
   <include file="$(find carla_waypoint_publisher)/launch/carla_waypoint_publisher.launch" >
     <arg name='host' value='$(arg host)'/>
     <arg name='port' value='$(arg port)'/>
     <arg name="role_name" value='$(arg role_name)'/>
     <arg name="goal_point" value="$(arg goal_point)" />
   </include>
-
+  -->
+  
   <!--
     ##############################
     # Map loading                #

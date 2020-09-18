@@ -1,6 +1,3 @@
-[submodule "catkin_ws/src/ros-bridge"]
-	path = catkin_ws/src/ros-bridge
-	url = ../ros-bridge.git
 [submodule "docker/challenge/scenario_runner"]
 	path = docker/challenge/scenario_runner
 	url = https://github.com/carla-simulator/scenario_runner.git

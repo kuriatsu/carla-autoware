@@ -339,7 +339,6 @@ class CarlaRosBridge(object):
         """
         create an actor
         """
-        print(carla_actor)
         parent = None
         if carla_actor.parent:
             if carla_actor.parent.id in self.actors:
@@ -369,20 +368,17 @@ class CarlaRosBridge(object):
             if carla_actor.type_id.startswith("sensor.camera"):
                 if carla_actor.type_id.startswith("sensor.camera.rgb"):
 
-                    #####################added by kuri ###########################
-                    ## original
+                    ### edited by kuri ###
+                    ## previous
                     # actor = RgbCamera(
-                        # carla_actor, parent, self.comm, self.carla_settings.synchronous_mode)
-
-                    ## new
-                    # added below to restrict camera images which handled with ros. 
-                    # Camera with rolename 'ros_camera' will be handled with ros
-                    if carla_actor.attributes.get('role_name') == 'ros_camera':
-                        rospy.loginfo(carla_actor.attributes.get('role_name'))
+                    #     carla_actor, parent, self.comm, self.carla_settings.synchronous_mode)
+                    ## now
+                    if carla_actor.attributes.get('role_name') == 'front':
                         actor = RgbCamera(
                             carla_actor, parent, self.comm, self.carla_settings.synchronous_mode)
-                    ##########################################################
-           
+
+                    #####################
+
                 elif carla_actor.type_id.startswith("sensor.camera.depth"):
                     actor = DepthCamera(
                         carla_actor, parent, self.comm, self.carla_settings.synchronous_mode)

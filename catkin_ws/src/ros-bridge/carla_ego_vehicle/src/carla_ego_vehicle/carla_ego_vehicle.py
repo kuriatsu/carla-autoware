@@ -73,10 +73,6 @@ class CarlaEgoVehicle(object):
             pose.orientation.y = quat[1]
             pose.orientation.z = quat[2]
             pose.orientation.w = quat[3]
-            # pose.orientation.x = float(spawn_point[3])
-            # pose.orientation.y = float(spawn_point[4])
-            # pose.orientation.z = float(spawn_point[5])
-            # pose.orientation.w = float(spawn_point[6])
             self.actor_spawnpoint = pose
 
         self.initialpose_subscriber = rospy.Subscriber(

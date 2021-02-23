@@ -23,10 +23,10 @@ import carla
 from carla_ros_bridge.sensor import Sensor
 import carla_ros_bridge.transforms as trans
 
-
 #############added by kuri #################
 from sensor_msgs.msg import CompressedImage
 import cv2
+import re
 ############################################
 
 class Camera(Sensor):
@@ -68,7 +68,7 @@ class Camera(Sensor):
             self._build_camera_info()
 
         ##### added by kuri #####
-        self.comp_image_pub = rospy.Publisher("/carla/ego_vehicle/camera/rgb/ros_camera/image_color/compressed", CompressedImage)
+        self.comp_image_pub = rospy.Publisher(self.get_topic_prefix() + "/compressed", CompressedImage, queue_size=5)
         #############################
 
     def _build_camera_info(self):
@@ -110,31 +110,36 @@ class Camera(Sensor):
         image_data_array, encoding = self.get_carla_image_data_array(
             carla_image=carla_image)
 
-
+            
         ############### edited by kuri #########################
         ## original
+
         # img_msg = Camera.cv_bridge.cv2_to_imgmsg(image_data_array, encoding=encoding)
-        ## the camera data is in respect to the camera's own frame
+        # # the camera data is in respect to the camera's own frame
         # img_msg.header = self.get_msg_header()
-        # self.publish_message(
-        #    self.get_topic_prefix() + '/' + self.get_image_topic_name(), img_msg)
+        #
         # cam_info = self._camera_info
         # cam_info.header = img_msg.header
-        
+        #
+        # self.publish_message(self.get_topic_prefix() + '/camera_info', cam_info)
+        # self.publish_message(
+        #     self.get_topic_prefix() + '/' + self.get_image_topic_name(), img_msg)
+
         ## added
         msg = CompressedImage()
-        msg.header.stamp = rospy.Time.now()
+        # msg.header.stamp = rospy.Time.now()
+        msg.header = self.get_msg_header()
         msg.format = 'jpeg'
         msg.data = numpy.array(cv2.imencode('.jpg', image_data_array)[1]).tostring()
         self.comp_image_pub.publish(msg)
+
         cam_info = self._camera_info
+        # cam_info.header = img_msg.header
         cam_info.header = self.get_msg_header()
+        # cam_info.header.frame_id = '/carla/ego_vehicle/camera/rgb'
+        # self.publish_message('/carla/ego_vehicle/camera/rgb/camera_info', cam_info)
+        self.publish_message(re.findall('/.*/', self.get_topic_prefix())[0] + 'camera_info', cam_info)
 
-        #########################################################
-
-
-
-        self.publish_message(self.get_topic_prefix() + '/camera_info', cam_info)
 
     def get_ros_sensor_transform(self, transform):
         """

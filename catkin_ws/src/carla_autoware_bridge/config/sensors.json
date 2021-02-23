@@ -1,27 +1,11 @@
 { "sensors": [
         {
             "type": "sensor.camera.rgb",
-            "id": "ros_camera",
-            "x": 2.0, "y": 0.0, "z": 1.5, "roll": 0.0, "pitch": 0.0, "yaw": 0.0,
-            "width": 1000,
-            "height": 700,
-            "fov": 100
-        },
-        {
-            "type": "sensor.camera.rgb",
-            "id": "wide_front",
-            "x": -0.05, "y": -0.2, "z": 1.21, "roll": 0.0, "pitch": 0.0, "yaw": 0.0, 
-            "width": 3840,
+            "id": "front",
+            "x": 1.0, "y": 0.0, "z": 1.5, "roll": 0.0, "pitch": 0.0, "yaw": 0.0,
+            "width": 1920,
             "height": 1080,
-            "fov": 100
-        },
-        {
-            "type": "sensor.camera.rgb",
-            "id": "ros_camera_back",
-            "x": -5.0, "y": 0.0, "z": 4.0, "roll": 0.0, "pitch": -10.0, "yaw": 0.0,
-            "width": 800,
-            "height": 600,
-            "fov": 100
+            "fov": 60
         },
         {
             "type": "sensor.other.gnss",
@@ -31,6 +15,11 @@
         {
             "type": "sensor.other.collision",
             "id": "collision1",
+            "x": 0.0, "y": 0.0, "z": 0.0
+        },
+        {
+            "type": "sensor.other.lane_invasion",
+            "id": "laneinvasion1",
             "x": 0.0, "y": 0.0, "z": 0.0
         }
     ]

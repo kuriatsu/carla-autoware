@@ -22,7 +22,7 @@ import rospy
 import tf
 from tf.transformations import euler_from_quaternion
 from nav_msgs.msg import Path
-from geometry_msgs.msg import PoseStamped, Pose
+from geometry_msgs.msg import PoseStamped
 from carla_msgs.msg import CarlaWorldInfo
 
 import carla
@@ -51,43 +51,7 @@ class CarlaToRosWaypointConverter(object):
             '/carla/{}/waypoints'.format(self.role_name), Path, queue_size=1, latch=True)
 
         # set initial goal
-        # self.goal = self.world.get_map().get_spawn_points()[0]
-        goal_point_param = rospy.get_param("~goal_point")
-        rospy.loginfo("goal is {}".format(goal_point_param))
-        if goal_point_param != "":
-            # goal_point = goal_point_param.split(',')
-            # if len(goal_point) != 6:
-            #     raise ValueError("Invalid goalpoint '{}'".format(goal_point_param))
-            # pose = Pose()
-            # pose.position.x = float(goal_point[0])
-            # pose.position.y = -float(goal_point[1])
-            # pose.position.z = float(goal_point[2])
-            # quat = quaternion_from_euler(
-            #     math.radians(float(goal_point[3])),
-            #     math.radians(float(goal_point[4])),
-            #     math.radians(float(goal_point[5])))
-            # pose.orientation.x = quat[0]
-            # pose.orientation.y = quat[1]
-            # pose.orientation.z = quat[2]
-            # pose.orientation.w = quat[3]
-            # self.goal = pose
-            goal_point = goal_point_param.split(',')
-            carla_goal = carla.Transform()
-            carla_goal.location.x = float(goal_point[0])
-            carla_goal.location.y = -float(goal_point[1])
-            carla_goal.location.z = float(goal_point[2]) + 2  # 2m above ground
-            quaternion = (
-                float(goal_point[3]),
-                float(goal_point[4]),
-                float(goal_point[5]),
-                float(goal_point[6])
-            )
-            _, _, yaw = euler_from_quaternion(quaternion)
-            carla_goal.rotation.yaw = -math.degrees(yaw)
-
-            self.goal = carla_goal
-        else:
-            self.goal = self.world.get_map().get_spawn_points()[0]
+        self.goal = self.world.get_map().get_spawn_points()[0]
 
         self.current_route = None
         self.goal_subscriber = rospy.Subscriber(
@@ -178,6 +142,7 @@ class CarlaToRosWaypointConverter(object):
                                 carla.Location(goal.location.x,
                                                goal.location.y,
                                                goal.location.z))
+
         return route
 
     def publish_waypoints(self):

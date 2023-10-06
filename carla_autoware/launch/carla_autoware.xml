@@ -1,0 +1,11 @@
+<launch>
+    <node pkg="carla_autoware" exec="carla_vehicle_interface_node" name="carla_vehicle_interface"/>
+    <node pkg="carla_autoware" exec="pseudo_localization_node" name="pseudo_localization"/>
+    <node pkg="topic_tools" exec="relay" name="carla_to_lidar_concatenated" args="/carla/ego_vehicle/lidar /sensing/lidar/concatenated/pointcloud"/>
+    <node pkg="topic_tools" exec="relay" name="carla_to_outlier_filtered" args="/carla/ego_vehicle/lidar /sensing/lidar/top/outlier_filtered/pointcloud"/>
+    <node pkg="topic_tools" exec="relay" name="carla_to_autoware_imu" args="/carla/ego_vehicle/imu /sensing/imu/imu_data"/>
+    <node pkg="topic_tools" exec="relay" name="camera_info" args="/carla/ego_vehicle/rgb_front/camera_info /sensing/camera/camera5/camera_info"/>
+    <node pkg="topic_tools" exec="relay" name="camera" args="/carla/ego_vehicle/rgb_front/image /sensing/camera/camera5/image_rect_color"/>
+    <!-- node pkg="topic_tools" exec="relay" name="initialpose" args="/initialpose /initialpose3d"/-->
+    <node pkg="tf2_ros" exec="static_transform_publisher" name="ego_vehicle2base_link" args=" 0 0 0 0 0 0 /ego_vehicle /base_link "/>
+</launch>

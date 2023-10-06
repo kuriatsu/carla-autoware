@@ -1,9 +1,0 @@
-<!-- -->
-<launch>
-  <arg name="role_name" default="ego_vehicle" />
-
-  <node pkg="carla_fake_control" type="carla_fake_control_node.py" name="carla_fake_control_$(arg role_name)" output="screen">
-    <remap from="/carla/ego_vehicle/vehicle_control_cmd" to="/fake_control_cmd"/>
-    <param name="role_name" value="$(arg role_name)" />
-  </node>
-</launch>

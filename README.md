@@ -1,148 +1,138 @@
-# Autoware in Carla
-Integration of AutoWare AV software with the CARLA simulator
+# ROS2/Autoware.universe bridge for CARLA simulator
 
-![Autoware Runtime Manager Settings](docs/images/autoware-rviz-carla-town01-running.png)
+[![Actions Status](https://github.com/carla-simulator/ros-bridge/workflows/CI/badge.svg)](https://github.com/carla-simulator/ros-bridge)
+[![Documentation](https://readthedocs.org/projects/carla/badge/?version=latest)](http://carla.readthedocs.io)
+[![GitHub](https://img.shields.io/github/license/carla-simulator/ros-bridge)](https://github.com/carla-simulator/ros-bridge/blob/master/LICENSE)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/carla-simulator/ros-bridge)](https://github.com/carla-simulator/ros-bridge/releases/latest)
 
-## Requirements
+ The official [ros-bridge](https://github.com/carla-simulator/ros-bridge) is modified.   
+ This ros package enables autonomous driving using Autoware in addition to the basic function of the official [ros-bridge](https://github.com/carla-simulator/ros-bridge) package (communication between ros and carla)
 
-- ROS kinetic
-- Autoware (tested with 1.12.0)
-- CARLA 0.9.6
+![control_carla_universe](https://user-images.githubusercontent.com/38074802/187683146-2b8d492b-6997-4460-af1a-66ea364c90ed.gif)
 
-## Opens
+# Environment 
+|ubuntu|ros|carla|autoware|
+|:---:|:---:|:---:|:---:|
+|20.04|galactic|0.9.12|universe/master|
 
-- object detection (especially traffic lights)
-- no compliance with traffic rules (due to missing vector map)
+### example  
+- 11th Gen Intel® Core™ i7-11700F @ 2.50GHz × 16
+- GeForce RTX3070
+- 32GB mem
 
-## Setup
+# Setup
+## install
+* [Autoware.Universe](https://autowarefoundation.github.io/autoware-documentation/galactic/installation/autoware/source-installation/) (Checkout to `galactic` branch)
+* [CARLA Installation](https://carla.readthedocs.io/en/latest/start_quickstart/) (Debian installation)
+* carla-ros-bridge (this repo)
+  ```bash
+  mkdir -p ros2_ws/src
+  cd ros2_ws/src
+  git clone git@github.com:kuriatsu/ros-bridge.git --recursive
+  ```
+* [derived_object_msgs](https://github.com/astuff/astuff_sensor_msgs) (branch 3.3.0)
+  ```bash
+  cd ros2_ws/src
+  git clone git@github.com:astuff/astuff_sensor_msgs.git
+  cd astuff_sensor_msgs
+  git checkout -b 3.3.0 refs/tags/3.3.0
+  ```
+* [autoware containts](https://bitbucket.org/carla-simulator/autoware-contents/src/master/maps/)  
+  1. Download maps (y-axis inverted version) to arbitaly location
+  2. Change names. (point_cloud/Town01.pcd -> Town01/pointcloud_map.pcd, vector_maps/lanelet2/Town01.osm -> Town01/lanelet2_map.osm)
+  
+* Change file path at `carla_spawn_objects/carla_spawn_objects.py L49` as shown in first paragraph of Fix Log.
 
-### Autoware
-
-Setup/build Autoware as described here: https://github.com/CPFL/Autoware
-
-### Carla
-
-    #download docker image (e.g. version 0.9.6)
-    docker pull carlasim/carla:<carla-version>
-
-    #extract the Carla Python API from the image
-    cd ~
-    mkdir carla-python
-    docker run --rm --entrypoint tar carlasim/carla:<carla-version> cC /home/carla/PythonAPI . | tar xvC ~/carla-python
-
-
-### Carla Autoware Bridge
-
-The Carla Autoware Bridge contains two submodules: the Carla ROS bridge (https://github.com/carla-simulator/ros-bridge.git)
-and point cloud maps for Carla Towns (https://bitbucket.org/carla-simulator/autoware-contents). Clone the repository and 
-initialize the submodules:
-
-[Warning]: Make sure you have git lfs(Large File System) installed. To install git lfs, please go to [git lfs documentation](https://github.com/git-lfs/git-lfs/wiki/Installation)
-
-    cd ~
-    git lfs clone https://github.com/carla-simulator/carla-autoware.git
-    cd carla-autoware
-    git submodule update --init
-
-The Carla Autoware Bridge is a ROS package. Therefore we create a catkin workspace (containing all relevant packages).
-
-    cd catkin_ws
-    source <path-to-autoware>/install/setup.bash
-    catkin_init_workspace src/
-
-    # install dependencies
-    rosdep update
-    rosdep install -y --from-paths src --ignore-src --rosdistro $ROS_DISTRO
-
-    catkin_make
-
-## Run
-
-To run Autoware within Carla please use the following execution order:
-
-1. Carla Server
-2. Autoware (including carla-ros-bridge and additional nodes)
-
-You need two terminals:
-
-    #Terminal 1
-
-    #execute Carla
-    #For details, please refer to the CARLA documentation
-    nvidia-docker run -p 2000-2001:2000-2001 -it --rm carlasim/carla:<carla-version> ./CarlaUE4.sh
-
-
-    #Terminal 2
-
-    export CARLA_AUTOWARE_ROOT=~/carla-autoware/autoware_launch
-    export CARLA_MAPS_PATH=~/carla-autoware/autoware_data/maps
-    source $CARLA_AUTOWARE_ROOT/../catkin_ws/devel/setup.bash
-    export PYTHONPATH=$PYTHONPATH:~/carla-python/carla/dist/carla-<carla-version>-py2.7-linux-x86_64.egg:~/carla-python/carla/
-    roslaunch $CARLA_AUTOWARE_ROOT/devel.launch
-
-
-### Multi machine setup
-
-You can run Autoware and Carla on different machines. 
-To let the carla autoware bridge connect to a remote Carla Server, execute roslaunch with the following parameters
-
-    roslaunch host:=<hostname> port:=<port number> $CARLA_AUTOWARE_ROOT/devel.launch
-
-## Ego Vehicle
-
-The setup of the sensors is defined within [sensors.json](catkin_ws/src/carla_autoware_bridge/config/sensors.json).
-
-[carla_ego_vehicle](https://github.com/carla-simulator/ros-bridge/tree/master/carla_ego_vehicle) reads the file and spawn the ego vehicle and the sensors.
-
-
-## Development support
-
-### Set Start/End of Route
-
-When starting the carla_autoware_bridge a random spawn point and a fixed goal is used to calculate the route.
-
-To override this, you can use RVIZ.
-
-![Autoware Runtime Manager Settings](docs/images/rviz_set_start_goal.png)
-
-- selecting a Pose with '2D Pose Estimate' will delete the current ego_vehicle and respawn it at the specified position.
-- selecting a Pose with '2D Nav Goal' will set a new goal within `carla_waypoint_publisher`.
-
-#### Manual steering
-
-Press `B` to be able to steer the ego vehicle within ROS manual control.
-
-Internally, this is done by stopping the conversion from the Autoware control message to AckermannDrive within the node `vehiclecmd_to_ackermanndrive`. The relevant ros-topic is `/vehicle_control_manual_override`.
-
-#### Use Carla Ground Truth Objects
-
-You can skip the Autoware perception by using the ground truth objects from CARLA.
-Therefore disable all relevant Autware perception nodes and execute:
-
+## build
+```bash
+cd ros2_ws
+colcon build --symlink-install
 ```
-rosrun carla_autoware_bridge carla_to_autoware_detected_objects
+# Getting start
+
+1. Run carla, change map, spawn object if you need
+```bash
+/opt/carla/CarlaUE4.sh
+python3 /opt/carla/PythonAPI/util/config.py -m Town10
+# optional
+python3 /opt/carla/PythonAPI/examples/generate_traffic.py -n 10 -w 20
 ```
 
-The objects get then published to `/tracked_objects`.
+2. Run ros nodes
+```bash
+ros2 launch carla_ros_bridge carla_ros_bridge_with_example_ego_vehicle.launch.py
+ros2 launch autoware_bridge autoware_bridge_launch.xml 
+ros2 launch autoware_bridge autoware_launch.xml map_path:=<path-to-map-dir>/Town10 vehicle_model:=sample_vehicle sensor_model:=sample_sensor_kit
+```
 
-## Design
+3. Set initial pose
+4. Set goal position
+5. Wait for planning
+6. Engage (use web interface or Rviz plugin (AutowareStatePanel))
 
-The bridge contains three Carla Clients.
+# Fix Log
+carla_spawn_objects/carla_spawn_objects.py L49 : Fixed bag to load ego vehicle definition file
+```python
+self.objects_definition_file = self.get_param('objects_definition_file', '<path-to-this-pkg>/carla_spawn_objects/config/objects.json')
+```
 
-1. ROS Bridge - Monitors existing actors in Carla, publishes changes on ROS Topics (e.g. new sensor data)
-2. Ego Vehicle - Instantiation of the ego vehicle with its sensor setup.
-3. Waypoint Calculation - Uses the Carla Python API to calculate a route.
+pcl_recorder/src/PclRecorderROS2.cpp L29 : fixed build error
+```python
+# transform = tf2::transformToEigen (tf_buffer_->lookupTransform(fixed_frame_, cloud->header.frame_id,  cloud->header.stamp, rclcpp::Duration(1)));
+transform = tf2::transformToEigen (tf_buffer_->lookupTransform(fixed_frame_, cloud->header.frame_id,  cloud->header.stamp, rclcpp::Duration::from_seconds(1)));
 
-![Design Overview](docs/images/design.png)
+# sub_opt.callback_group = this->create_callback_group(rclcpp::callback_group::CallbackGroupType::MutuallyExclusive);
+sub_opt.callback_group = this->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+```
 
-## Scenario Execution
+carla_ros_bridge/bridge.py L430 : fixed map loading bag
+```python
+# if "town" in parameters and not parameters['passive']:
+#     if parameters["town"].endswith(".xodr"):
+#         carla_bridge.loginfo(
+#             "Loading opendrive world from file '{}'".format(parameters["town"]))
+#         with open(parameters["town"]) as od_file:
+#             data = od_file.read()
+#         carla_world = carla_client.generate_opendrive_world(str(data))
+#     else:
+#         if carla_world.get_map().name != parameters["town"]:
+#             carla_bridge.loginfo("Loading town '{}' (previous: '{}').".format(
+#                 parameters["town"], carla_world.get_map().name))
+#             carla_world = carla_client.load_world(parameters["town"])
+#     carla_world.tick()
+```
 
-It is possible to use CARLA scenario runner in conjunction with autoware: [Documentation](docs/use_scenario_runner.md).
+carla_spawn_objects/config/objects.json : Remove tf sensor
 
-## Troubleshooting
+ros_compatibility/src/ros_compatibility/node.py L137 : Fix error of /use_sim_time
+```python
+param = Parameter("use_sim_time", Parameter.Type.BOOL, True)
+#            param = Parameter("use_sim_time", Parameter.Type.BOOL, True)
+super(CompatibleNode, self).__init__(
+    name,
+    allow_undeclared_parameters=True,
+    automatically_declare_parameters_from_overrides=True,
+    parameter_overrides=[param],
+#                automatically_declare_parameters_from_overrides=True,
+    automatically_declare_parameters_from_overrides=False,
+#                parameter_overrides=[param],
+    parameter_overrides=[],
 
-### Autoware fails if started shortly after changing the Town.
+```
 
-There is a [bug](https://gitlab.com/autowarefoundation/autoware.ai/common/issues/1) within Autoware that leads to errors if the simulation time is below 5 seconds (e.g. ray_ground_filter and ndt_matching die)
-The simulation time is reset whenever you change the CARLA town (e.g by executing carla_ros_bridge with argument `town:=Town01`).
-As a workaround execute ros-bridge once to change the town (`roslaunch carla_ros_bridge carla_ros_bridge.launch town:=Town01`), kill it and wait 5 seconds before subsequent launches.
+carla_spawn_objects/launch/carla_example_ego_vehicle.launch.py L41 : Remove function that change ego_vehicle position by /initial_pose
+```python
+#        launch.actions.IncludeLaunchDescription(
+#            launch.launch_description_sources.PythonLaunchDescriptionSource(
+#                os.path.join(get_package_share_directory(
+#                    'carla_spawn_objects'), 'set_initial_pose.launch.py')
+#            ),
+#            launch_arguments={
+#                'role_name': launch.substitutions.LaunchConfiguration('role_name'),
+#                'control_id': launch.substitutions.LaunchConfiguration('control_id')
+#            }.items()
+#        )
+```
+
+# TODO
+- Need to refine vehicle controller at [autoware_bridge/src/carla_vehicle_interface.cpp L82](https://github.com/kuriatsu/ros-bridge/blob/cdc593b26c123440e7d92fec71674b8a12f1881b/autoware_bridge/src/carla_vehicle_interface.cpp#L82)

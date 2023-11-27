@@ -12,3 +12,6 @@
 [submodule "astuff_sensor_msgs"]
 	path = astuff_sensor_msgs
 	url = git@github.com:astuff/astuff_sensor_msgs.git
+[submodule "autoware_msgs"]
+	path = autoware_msgs
+	url = git@github.com:autowarefoundation/autoware_msgs.git

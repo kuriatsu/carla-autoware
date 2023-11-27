@@ -1,6 +1,6 @@
 from setuptools import setup
 
-package_name = 'carla_autoware'
+package_name = 'carla_psim_bridge'
 
 setup(
     name=package_name,

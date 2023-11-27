@@ -15,3 +15,9 @@
 [submodule "autoware_msgs"]
 	path = autoware_msgs
 	url = git@github.com:autowarefoundation/autoware_msgs.git
+[submodule "autoware_auto_msgs"]
+	path = autoware_auto_msgs
+	url = git@github.com:tier4/autoware_auto_msgs.git
+[submodule "autoware_adapi_msgs"]
+	path = autoware_adapi_msgs
+	url = git@github.com:autowarefoundation/autoware_adapi_msgs.git

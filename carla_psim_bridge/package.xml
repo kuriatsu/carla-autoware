@@ -4,7 +4,7 @@
   <name>carla_psim_bridge</name>
   <version>0.0.0</version>
   <description>bridge between carla and psim in autoware.universe</description>
-  <maintainer email="kuriatsubayashi712@gmail.com" user="kuriatsu"></maintainer>
+  <maintainer email="kuriatsubayashi712@gmail.com"></maintainer>
   <license>MIT</license>
 
   <exec_depend>rclpy</exec_depend>

@@ -1,3 +1,4 @@
+//#define BOOST_BIND_NO_PLACEHOLDERS
 #include "rclcpp/rclcpp.hpp"
 
 #include "carla_msgs/msg/carla_ego_vehicle_status.hpp"
@@ -26,8 +27,8 @@ private:
     rclcpp::Subscription<carla_msgs::msg::CarlaEgoVehicleStatus>::SharedPtr sub_status;
     rclcpp::Subscription<autoware_auto_control_msgs::msg::AckermannControlCommand>::SharedPtr sub_control;
 
-    void egoVehicleStatusCb(const carla_msgs::msg::CarlaEgoVehicleStatus &in_status);
-    void controlCb(const autoware_auto_control_msgs::msg::AckermannControlCommand &in_cmd);
+    void egoVehicleStatusCb(const carla_msgs::msg::CarlaEgoVehicleStatus::SharedPtr in_status);
+    void controlCb(const autoware_auto_control_msgs::msg::AckermannControlCommand::SharedPtr in_cmd);
     float m_current_vel;
 };
 
@@ -39,11 +40,11 @@ CarlaVehicleInterface::CarlaVehicleInterface(): Node("carla_vehicle_interface_no
     pub_gear_state = this->create_publisher<autoware_auto_vehicle_msgs::msg::GearReport>("/vehicle/status/gear_status", 10);
     pub_control = this->create_publisher<carla_msgs::msg::CarlaEgoVehicleControl>("/carla/ego_vehicle/vehicle_control_cmd", 10);
 
-    sub_status = this->create_subscription<carla_msgs::msg::CarlaEgoVehicleStatus>("/carla/ego_vehicle/vehicle_status", 10, std::bind(&CarlaVehicleInterface::egoVehicleStatusCb, this, _1));
     sub_control = this->create_subscription<autoware_auto_control_msgs::msg::AckermannControlCommand>("/control/trajectory_follower/control_cmd", 10, std::bind(&CarlaVehicleInterface::controlCb, this, _1));
+    sub_status = this->create_subscription<carla_msgs::msg::CarlaEgoVehicleStatus>("/carla/ego_vehicle/vehicle_status", 10, std::bind(&CarlaVehicleInterface::egoVehicleStatusCb, this, _1));
 }
 
-void CarlaVehicleInterface::egoVehicleStatusCb(const carla_msgs::msg::CarlaEgoVehicleStatus &in_status)
+void CarlaVehicleInterface::egoVehicleStatusCb(const carla_msgs::msg::CarlaEgoVehicleStatus::SharedPtr in_status)
 {
     std::cout << "published" << std::endl;
 
@@ -53,20 +54,20 @@ void CarlaVehicleInterface::egoVehicleStatusCb(const carla_msgs::msg::CarlaEgoVe
     autoware_auto_vehicle_msgs::msg::GearReport out_gear_state;
 
     rclcpp::Time now = this->get_clock()->now();
-    out_vel_state.header.stamp = in_status.header.stamp;
+    out_vel_state.header.stamp = in_status->header.stamp;
     out_vel_state.header.frame_id = "base_link";
-    out_vel_state.longitudinal_velocity = in_status.velocity;
+    out_vel_state.longitudinal_velocity = in_status->velocity;
     out_vel_state.lateral_velocity = 0.0;
     out_vel_state.heading_rate = 0.0;
-    m_current_vel = in_status.velocity;
+    m_current_vel = in_status->velocity;
 
-    out_steering_state.stamp = in_status.header.stamp;
-    out_steering_state.steering_tire_angle = -in_status.control.steer;
+    out_steering_state.stamp = in_status->header.stamp;
+    out_steering_state.steering_tire_angle = -in_status->control.steer;
 
-    out_gear_state.stamp = in_status.header.stamp;
-    out_gear_state.report = in_status.control.gear+1;
+    out_gear_state.stamp = in_status->header.stamp;
+    out_gear_state.report = in_status->control.gear+1;
 
-    out_ctrl_mode.stamp = in_status.header.stamp;
+    out_ctrl_mode.stamp = in_status->header.stamp;
     out_ctrl_mode.mode = 1;
 
     pub_vel_state->publish(out_vel_state);
@@ -75,16 +76,16 @@ void CarlaVehicleInterface::egoVehicleStatusCb(const carla_msgs::msg::CarlaEgoVe
     pub_gear_state->publish(out_gear_state);
 }
 
-void CarlaVehicleInterface::controlCb(const autoware_auto_control_msgs::msg::AckermannControlCommand &in_cmd)
+void CarlaVehicleInterface::controlCb(const autoware_auto_control_msgs::msg::AckermannControlCommand::SharedPtr in_cmd)
 {
     carla_msgs::msg::CarlaEgoVehicleControl out_cmd;
     float P = 1.0;
-    float target_speed = abs(in_cmd.longitudinal.speed);
+    float target_speed = abs(in_cmd->longitudinal.speed);
     out_cmd.throttle = P * (target_speed - m_current_vel);
-    out_cmd.steer = -in_cmd.lateral.steering_tire_angle;
+    out_cmd.steer = -in_cmd->lateral.steering_tire_angle;
     out_cmd.brake = 0;
-    out_cmd.hand_brake = (in_cmd.longitudinal.speed == 0) ? true : false;
-    out_cmd.reverse = (in_cmd.longitudinal.speed < 0) ? true : false;
+    out_cmd.hand_brake = (in_cmd->longitudinal.speed == 0) ? true : false;
+    out_cmd.reverse = (in_cmd->longitudinal.speed < 0) ? true : false;
     out_cmd.gear = 1;
     out_cmd.manual_gear_shift = false;
     pub_control->publish(out_cmd);

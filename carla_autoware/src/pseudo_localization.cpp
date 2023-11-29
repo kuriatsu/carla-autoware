@@ -1,5 +1,4 @@
 #include "rclcpp/rclcpp.hpp"
-
 #include "carla_msgs/msg/carla_ego_vehicle_status.hpp"
 #include "nav_msgs/msg/odometry.hpp"
 #include "geometry_msgs/msg/pose_with_covariance_stamped.hpp"
@@ -31,8 +30,8 @@ private:
     rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr sub_odom;
     rclcpp::Subscription<carla_msgs::msg::CarlaEgoVehicleStatus>::SharedPtr sub_status;
 
-    void egoVehicleOdomCb(const nav_msgs::msg::Odometry &in_odom);
-    void egoVehicleStatusCb(const carla_msgs::msg::CarlaEgoVehicleStatus &in_status);
+    void egoVehicleOdomCb(const nav_msgs::msg::Odometry::SharedPtr in_odom);
+    void egoVehicleStatusCb(const carla_msgs::msg::CarlaEgoVehicleStatus::SharedPtr in_status);
 };
 
 PseudoLocalization::PseudoLocalization(): Node("pseudo_localization_node")
@@ -47,16 +46,16 @@ PseudoLocalization::PseudoLocalization(): Node("pseudo_localization_node")
     pub_pose_stamped = this->create_publisher<geometry_msgs::msg::PoseStamped>("/localization/pose_twist_fusion_filter/pose", 10);
     pub_initialization_state = this->create_publisher<autoware_adapi_v1_msgs::msg::LocalizationInitializationState>("/localization/initialization_state", 10);
 
-    sub_odom = this->create_subscription<nav_msgs::msg::Odometry>("/carla/ego_vehicle/odometry", 10, std::bind(&PseudoLocalization::egoVehicleOdomCb, this, _1));
     sub_status = this->create_subscription<carla_msgs::msg::CarlaEgoVehicleStatus>("/carla/ego_vehicle/vehicle_status", 10, std::bind(&PseudoLocalization::egoVehicleStatusCb, this, _1));
+    sub_odom = this->create_subscription<nav_msgs::msg::Odometry>("/carla/ego_vehicle/odometry", 10, std::bind(&PseudoLocalization::egoVehicleOdomCb, this, _1));
 }
 
-void PseudoLocalization::egoVehicleOdomCb(const nav_msgs::msg::Odometry &in_odom) {
+void PseudoLocalization::egoVehicleOdomCb(const nav_msgs::msg::Odometry::SharedPtr in_odom) {
 
     std::cout << "published" << std::endl;
     rclcpp::Time now = this->get_clock()->now();
 
-    nav_msgs::msg::Odometry odom = in_odom;
+    nav_msgs::msg::Odometry odom = *in_odom;
     geometry_msgs::msg::PoseWithCovarianceStamped pose_covariance;
     geometry_msgs::msg::PoseStamped pose_stamped;
     tier4_debug_msgs::msg::Float32Stamped voxel_likelihood, transform_prob;
@@ -96,7 +95,7 @@ void PseudoLocalization::egoVehicleOdomCb(const nav_msgs::msg::Odometry &in_odom
     pub_initialization_state->publish(initialization_state);
 }
 
-void PseudoLocalization::egoVehicleStatusCb(const carla_msgs::msg::CarlaEgoVehicleStatus &in_status)
+void PseudoLocalization::egoVehicleStatusCb(const carla_msgs::msg::CarlaEgoVehicleStatus::SharedPtr in_status)
 {
     std::cout << "published" << std::endl;
     rclcpp::Time now = this->get_clock()->now();
@@ -104,7 +103,7 @@ void PseudoLocalization::egoVehicleStatusCb(const carla_msgs::msg::CarlaEgoVehic
     geometry_msgs::msg::AccelWithCovarianceStamped accel;
     accel.header.stamp = now;
     accel.header.frame_id = "map";
-    accel.accel.accel = in_status.acceleration;
+    accel.accel.accel = in_status->acceleration;
     pub_accel_with_covariance->publish(accel);
 }
 

@@ -29,6 +29,7 @@ class CarlaPsimBridge(Node):
         self.ego_vehicle = None
         for actor in world.get_actors():
             if actor.attributes.get("role_name") in ["hero", "ego_vehicle"]:
+                self.get_logger().info(f"found ego vehicle")
                 self.ego_vehicle = actor
 
 

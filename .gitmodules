@@ -6,9 +6,6 @@
 	path = autoware_data
 	url = https://bitbucket.org/carla-simulator/autoware-contents.git
 	branch = master
-[submodule "ros-bridge"]
-	path = ros-bridge
-	url = git@github.com:kuriatsu/ros-bridge.git
 [submodule "astuff_sensor_msgs"]
 	path = astuff_sensor_msgs
 	url = git@github.com:astuff/astuff_sensor_msgs.git

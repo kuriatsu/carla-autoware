@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'carla_psim_bridge = scripts.carla_psim_bridge:main',
+            'carla_psim_bridge = carla_psim_bridge.carla_psim_bridge:main',
+            'carla_autoware_objects = carla_psim_bridge.carla_autoware_objects:main',
         ],
     },
 )
